@@ -167,7 +167,9 @@ with the settings minimum size 25 bp and minimum quality score 10. Then, the qua
 fastqc SRR5309277.trim.fastq
 ```
 
-![](README_files/fastqc2.png) The `preprocessing_SE.pl` script performs all these steps automatically for all FASTQ files.
+![](README_files/fastqc2.png) 
+
+The `preprocessing_SE.pl` script performs all these steps automatically for all FASTQ files.
 
 ``` shell
 ./preprocessing_SE.pl
@@ -544,7 +546,9 @@ Generate the plot using the `heatmap.2` function of the `gplots` package
 heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row", labRow = FALSE, trace = "none")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png) The column dendogram shows a clear separation of the 2 experimental group.
+![](README_files/figure-markdown_github/unnamed-chunk-10-1.png) 
+
+The column dendogram shows a clear separation of the 2 experimental group.
 
 UP & DOWN Regulated Genes Ring Plot
 ===================================
@@ -659,6 +663,8 @@ Save results as html that could be included in a publication as a supplementary 
 ``` r
 htmlReport(DEG.GO.BP.Cond, file="DEG_GO_BP_Cond.html")
 ```
+
+![](README_files/report.png)
 
 [REVIGO](http://revigo.irb.hr/) can be used to create visual representations of the GO enrichment analysis. Supek F, Bošnjak M, Škunca N, Šmuc T. "REVIGO summarizes and visualizes long lists of Gene Ontology terms" PLoS ONE 2011. [doi:10.1371/journal.pone.0021800](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0021800). We must prepare the input for REVIGO with the GO term and its p-value.
 
