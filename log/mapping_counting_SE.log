@@ -1,0 +1,308 @@
+./mapping_counting_SE.sh
+13:10:56 - Processing sample SRR5309277
+13:10:56 - STAR MAPPING
+Dec 04 13:10:56 ..... started STAR run
+Dec 04 13:10:56 ..... loading genome
+Dec 04 13:11:29 ..... started mapping
+Dec 04 13:14:58 ..... started sorting BAM
+Dec 04 13:16:11 ..... finished successfully
+13:16:12 - FeatureCounts
+
+        ==========     _____ _    _ ____  _____  ______          _____
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v1.6.3
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 1 BAM file                                       ||
+||                           S Aligned.sortedByCoord.out.bam                  ||
+||                                                                            ||
+||             Output file : gene_assigned_P                                  ||
+||                 Summary : gene_assigned_P.summary                          ||
+||              Annotation : genes.gtf (GTF)                                  ||
+||      Dir for temp files : ./                                               ||
+||                                                                            ||
+||                 Threads : 4                                                ||
+||                   Level : meta-feature level                               ||
+||              Paired-end : no                                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file genes.gtf ...                                         ||
+||    Features : 217183                                                       ||
+||    Meta-features : 33602                                                   ||
+||    Chromosomes/contigs : 7                                                 ||
+||                                                                            ||
+|| Process BAM file Aligned.sortedByCoord.out.bam...                          ||
+||    Single-end reads are included.                                          ||
+||    Assign alignments to features...                                        ||
+||    Total alignments : 24245879                                             ||
+||    Successfully assigned alignments : 21633329 (89.2%)                     ||
+||    Running time : 0.09 minutes                                             ||
+||                                                                            ||
+||                                                                            ||
+|| Summary of counting results can be found in file "gene_assigned_P.summary  ||
+|| "                                                                          ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+13:16:20    STAR MAPPING:
+13:16:20        0 h., 5 min., 16 secs.
+13:16:20    Assign reads to genes:
+13:16:20        0 h., 0 min., 8 secs.
+
+13:16:20 - Processing sample SRR5309278
+13:16:20 - STAR MAPPING
+Dec 04 13:16:20 ..... started STAR run
+Dec 04 13:16:20 ..... loading genome
+Dec 04 13:16:53 ..... started mapping
+Dec 04 13:23:18 ..... started sorting BAM
+Dec 04 13:25:46 ..... finished successfully
+13:25:47 - FeatureCounts
+
+        ==========     _____ _    _ ____  _____  ______          _____
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v1.6.3
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 1 BAM file                                       ||
+||                           S Aligned.sortedByCoord.out.bam                  ||
+||                                                                            ||
+||             Output file : gene_assigned_P                                  ||
+||                 Summary : gene_assigned_P.summary                          ||
+||              Annotation : genes.gtf (GTF)                                  ||
+||      Dir for temp files : ./                                               ||
+||                                                                            ||
+||                 Threads : 4                                                ||
+||                   Level : meta-feature level                               ||
+||              Paired-end : no                                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file genes.gtf ...                                         ||
+||    Features : 217183                                                       ||
+||    Meta-features : 33602                                                   ||
+||    Chromosomes/contigs : 7                                                 ||
+||                                                                            ||
+|| Process BAM file Aligned.sortedByCoord.out.bam...                          ||
+||    Single-end reads are included.                                          ||
+||    Assign alignments to features...                                        ||
+||    Total alignments : 43550689                                             ||
+||    Successfully assigned alignments : 39127034 (89.8%)                     ||
+||    Running time : 0.16 minutes                                             ||
+||                                                                            ||
+||                                                                            ||
+|| Summary of counting results can be found in file "gene_assigned_P.summary  ||
+|| "                                                                          ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+13:25:59    STAR MAPPING:
+13:25:59        0 h., 9 min., 27 secs.
+13:25:59    Assign reads to genes:
+13:25:59        0 h., 0 min., 12 secs.
+
+13:25:59 - Processing sample SRR5309279
+13:25:59 - STAR MAPPING
+Dec 04 13:25:59 ..... started STAR run
+Dec 04 13:25:59 ..... loading genome
+Dec 04 13:26:30 ..... started mapping
+Dec 04 13:30:30 ..... started sorting BAM
+Dec 04 13:31:43 ..... finished successfully
+13:31:44 - FeatureCounts
+
+        ==========     _____ _    _ ____  _____  ______          _____
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v1.6.3
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 1 BAM file                                       ||
+||                           S Aligned.sortedByCoord.out.bam                  ||
+||                                                                            ||
+||             Output file : gene_assigned_P                                  ||
+||                 Summary : gene_assigned_P.summary                          ||
+||              Annotation : genes.gtf (GTF)                                  ||
+||      Dir for temp files : ./                                               ||
+||                                                                            ||
+||                 Threads : 4                                                ||
+||                   Level : meta-feature level                               ||
+||              Paired-end : no                                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file genes.gtf ...                                         ||
+||    Features : 217183                                                       ||
+||    Meta-features : 33602                                                   ||
+||    Chromosomes/contigs : 7                                                 ||
+||                                                                            ||
+|| Process BAM file Aligned.sortedByCoord.out.bam...                          ||
+||    Single-end reads are included.                                          ||
+||    Assign alignments to features...                                        ||
+||    Total alignments : 28918238                                             ||
+||    Successfully assigned alignments : 26029543 (90.0%)                     ||
+||    Running time : 0.11 minutes                                             ||
+||                                                                            ||
+||                                                                            ||
+|| Summary of counting results can be found in file "gene_assigned_P.summary  ||
+|| "                                                                          ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+13:31:53    STAR MAPPING:
+13:31:53        0 h., 5 min., 45 secs.
+13:31:53    Assign reads to genes:
+13:31:53        0 h., 0 min., 9 secs.
+
+13:31:53 - Processing sample SRR5309286
+13:31:53 - STAR MAPPING
+Dec 04 13:31:53 ..... started STAR run
+Dec 04 13:31:53 ..... loading genome
+Dec 04 13:32:23 ..... started mapping
+Dec 04 13:36:45 ..... started sorting BAM
+Dec 04 13:38:01 ..... finished successfully
+13:38:01 - FeatureCounts
+
+        ==========     _____ _    _ ____  _____  ______          _____
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v1.6.3
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 1 BAM file                                       ||
+||                           S Aligned.sortedByCoord.out.bam                  ||
+||                                                                            ||
+||             Output file : gene_assigned_P                                  ||
+||                 Summary : gene_assigned_P.summary                          ||
+||              Annotation : genes.gtf (GTF)                                  ||
+||      Dir for temp files : ./                                               ||
+||                                                                            ||
+||                 Threads : 4                                                ||
+||                   Level : meta-feature level                               ||
+||              Paired-end : no                                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file genes.gtf ...                                         ||
+||    Features : 217183                                                       ||
+||    Meta-features : 33602                                                   ||
+||    Chromosomes/contigs : 7                                                 ||
+||                                                                            ||
+|| Process BAM file Aligned.sortedByCoord.out.bam...                          ||
+||    Single-end reads are included.                                          ||
+||    Assign alignments to features...                                        ||
+||    Total alignments : 31133345                                             ||
+||    Successfully assigned alignments : 27556900 (88.5%)                     ||
+||    Running time : 0.12 minutes                                             ||
+||                                                                            ||
+||                                                                            ||
+|| Summary of counting results can be found in file "gene_assigned_P.summary  ||
+|| "                                                                          ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+13:38:11    STAR MAPPING:
+13:38:11        0 h., 6 min., 8 secs.
+13:38:11    Assign reads to genes:
+13:38:11        0 h., 0 min., 10 secs.
+
+13:38:11 - Processing sample SRR5309287
+13:38:11 - STAR MAPPING
+Dec 04 13:38:11 ..... started STAR run
+Dec 04 13:38:11 ..... loading genome
+Dec 04 13:38:42 ..... started mapping
+Dec 04 13:44:09 ..... started sorting BAM
+Dec 04 13:45:59 ..... finished successfully
+13:46:00 - FeatureCounts
+
+        ==========     _____ _    _ ____  _____  ______          _____
+        =====         / ____| |  | |  _ \|  __ \|  ____|   /\   |  __ \
+          =====      | (___ | |  | | |_) | |__) | |__     /  \  | |  | |
+            ====      \___ \| |  | |  _ <|  _  /|  __|   / /\ \ | |  | |
+              ====    ____) | |__| | |_) | | \ \| |____ / ____ \| |__| |
+        ==========   |_____/ \____/|____/|_|  \_\______/_/    \_\_____/
+	  v1.6.3
+
+//========================== featureCounts setting ===========================\\
+||                                                                            ||
+||             Input files : 1 BAM file                                       ||
+||                           S Aligned.sortedByCoord.out.bam                  ||
+||                                                                            ||
+||             Output file : gene_assigned_P                                  ||
+||                 Summary : gene_assigned_P.summary                          ||
+||              Annotation : genes.gtf (GTF)                                  ||
+||      Dir for temp files : ./                                               ||
+||                                                                            ||
+||                 Threads : 4                                                ||
+||                   Level : meta-feature level                               ||
+||              Paired-end : no                                               ||
+||      Multimapping reads : not counted                                      ||
+|| Multi-overlapping reads : not counted                                      ||
+||   Min overlapping bases : 1                                                ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+//================================= Running ==================================\\
+||                                                                            ||
+|| Load annotation file genes.gtf ...                                         ||
+||    Features : 217183                                                       ||
+||    Meta-features : 33602                                                   ||
+||    Chromosomes/contigs : 7                                                 ||
+||                                                                            ||
+|| Process BAM file Aligned.sortedByCoord.out.bam...                          ||
+||    Single-end reads are included.                                          ||
+||    Assign alignments to features...                                        ||
+||    Total alignments : 39763081                                             ||
+||    Successfully assigned alignments : 35556548 (89.4%)                     ||
+||    Running time : 0.15 minutes                                             ||
+||                                                                            ||
+||                                                                            ||
+|| Summary of counting results can be found in file "gene_assigned_P.summary  ||
+|| "                                                                          ||
+||                                                                            ||
+\\===================== http://subread.sourceforge.net/ ======================//
+
+13:46:11    STAR MAPPING:
+13:46:11        0 h., 7 min., 49 secs.
+13:46:11    Assign reads to genes:
+13:46:11        0 h., 0 min., 11 secs.
+
+./mapping_counting_SE.sh runtime:
+    0 h., 35 min., 15 secs.

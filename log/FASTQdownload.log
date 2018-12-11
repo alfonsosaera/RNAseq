@@ -1,0 +1,21 @@
+cat SRR_Acc_List.txt | while read run; do ${SRA_toolkit_path}/fasterq-dump $run; done
+spots read      : 26,988,845
+reads read      : 26,988,845
+reads written   : 26,988,845
+spots read      : 48,243,957
+reads read      : 48,243,957
+reads written   : 48,243,957
+spots read      : 31,734,730
+reads read      : 31,734,730
+reads written   : 31,734,730
+spots read      : 34,658,939
+reads read      : 34,658,939
+reads written   : 34,658,939
+2018-12-04T10:08:20 fasterq-dump.2.9.2 sys: timeout exhausted while reading file within network system module - mbedtls_ssl_read returned -76 ( NET - Reading information from the socket failed )
+spots read      : 44,028,823
+reads read      : 44,028,823
+reads written   : 44,028,823
+2018-12-04T15:16:28 fasterq-dump.2.9.2 sys: timeout exhausted while reading file within network system module - mbedtls_ssl_read returned -76 ( NET - Reading information from the socket failed )
+spots read      : 29,890,180
+reads read      : 29,890,180
+reads written   : 29,890,180
