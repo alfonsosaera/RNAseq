@@ -2,9 +2,9 @@
 RNA-seq pipeline
 ================
 
-Bioinformatics pipeline to perform a basic RNA-seq analysis, from getting the FASTQ files, to differential gene expression and Gene Ontology analysis.
+Bioinformatics pipeline to perform a basic RNA-seq analysis, from getting the FASTQ files, to Differential Gene Expression and Gene Ontology Enrichment Analysis.
 
-It explains the steps of the analysis and provides Perl and bash scripts (`script` folder) to run the analysis automatically with a few commands in the [last section](https://github.com/alfonsosaera/ChIPseq#automate-the-analysis).
+It explains the steps of the analysis and provides Perl, bash and R scripts (`script` folder) to run the analysis automatically with a few commands in the [last section](https://github.com/alfonsosaera/RNAseq#automate-the-analysis).
 
 Dataset
 =======
@@ -13,7 +13,7 @@ I will use part of the dataset published in by [Jiang et al. Journal of Experime
 
 ![](README_files/paper.png)
 
-They perform in Arabidopsis wild type, mkp1 and mkp1 mpk6 seedlings treated with the bacterially derived PAMP elf26 for 0, 30, and 90 min. The raw Illumina reads generated from RNAseq experiments were deposited at NCBI (SRP101277).
+They perform a transcriptome analysis in Arabidopsis wild type, mkp1 and mkp1 mpk6 seedlings treated with the bacterially derived PAMP elf26 for 0, 30, and 90 min. The raw Illumina reads generated from RNAseq experiments were deposited at NCBI (SRP101277).
 
 I will use the wild type and mkp1 seedlings at 90 min.
 
@@ -167,9 +167,7 @@ with the settings minimum size 25 bp and minimum quality score 10. Then, the qua
 fastqc SRR5309277.trim.fastq
 ```
 
-![](README_files/fastqc2.png) 
-
-The `preprocessing_SE.pl` script performs all these steps automatically for all FASTQ files.
+![](README_files/fastqc2.png) The `preprocessing_SE.pl` script performs all these steps automatically for all FASTQ files.
 
 ``` shell
 ./preprocessing_SE.pl
@@ -180,9 +178,12 @@ Initial quality analysis reports are saved in the `results/fastqc` folder. Trimm
 Reads alignment and counting
 ============================
 
-The [Spliced Transcripts Alignment to a Reference](https://github.com/alexdobin/STAR) (`STAR`) software was used to align the reads to the genome. `STAR` is an ultrafast universal RNA-seq aligner based on a previously undescribed RNA-seq alignment algorithm that uses sequential maximum mappable seed search in uncompressed suffix arrays followed by seed clustering and stitching procedure.
+The [Spliced Transcripts Alignment to a Reference](https://github.com/alexdobin/STAR) (`STAR`) software was used to align the reads to the genome. `STAR` is an ultrafast universal RNA-seq aligner based on a previously undescribed RNA-seq alignment algorithm that uses sequential maximum mappable seed search in uncompressed suffix arrays followed by seed clustering and stitching procedure ([Dobin et al. 2013](https://www.ncbi.nlm.nih.gov/pubmed/23104886)).
 
-The `STAR` workflow consists of 2 steps: 1. Generating genome indexes files. In this step we must provide the reference genome sequence (FASTA file) and annotations (GTF file), from which `STAR` generate genome indexes used in the 2nd (mapping) step. The indexes are saved to disk and need only be generated once. 2. Mapping reads to the genome. In this step user supplies the index files (1st step) and the RNA-seq reads (sequences) as FASTA or FASTQ files.
+The `STAR` workflow consists of 2 steps:
+
+1.  Generating genome indexes files. In this step we must provide the reference genome sequence (FASTA file) and annotations (GTF file), from which `STAR` generates genome indexes used in the 2nd (mapping) step. The indexes are saved to disk and need only be generated once.
+2.  Mapping reads to the genome. In this step user supplies the index files (1st step) and the RNA-seq reads (sequences) as FASTA or FASTQ files.
 
 STAR index
 ==========
@@ -191,9 +192,9 @@ Although a collection of STAR genomes is available from <http://labshare.cshl.ed
 
 ``` shell
 STAR --runThreadN 4 \ # number of cores
-     --runMode genomeGenerate --genomeDir $indexPATH \ # path for the index
-     --genomeFastaFiles $fastaPATH/genome.fa \ # path to assembly FASTA file
-     --sjdbGTFfile $GTFpath/genes.gtf # path to annotation GTF file
+     --runMode genomeGenerate --genomeDir $indexPATH \ # path for the resulting index
+     --genomeFastaFiles $fastaPATH/genome.fa \ # path to assembly - FASTA file
+     --sjdbGTFfile $GTFpath/genes.gtf # path to annotation - GTF file
 ```
 
 Mapping and counting
@@ -203,16 +204,16 @@ Mapping of the reads (trimmed FASTQ file) with `STAR`
 
 ``` shell
 STAR --runThreadN 4 \  # number of cores
-     --genomeDir $indexPATH \ # path for the index
-     --readFilesIn SRR5309277.trim.fastq \ # path to reads FASTQ file
-     --outSAMtype BAM SortedByCoordinate #
+     --genomeDir $indexPATH \ # path to the index
+     --readFilesIn SRR5309277.trim.fastq \ # path to reads - FASTQ file
+     --outSAMtype BAM SortedByCoordinate 
 ```
 
 The output, a sorted by coordinateBAM file similar to `samtools sort` command, is named Aligned.sortedByCoord.out.bam. Reads are assigned to genes with [`featureCounts`](http://bioinf.wehi.edu.au/featureCounts/) from the [Subread package](http://subread.sourceforge.net/)
 
 ``` shell
 featureCounts -T 4 \ # number of cores
-              -a $GTFpath/genes.gtf \ # path to annotation GTF file
+              -a $GTFpath/genes.gtf \ # path to annotation - GTF file
               -o gene_assigned_P \ # path for output count matrix
               Aligned.sortedByCoord.out.bam # input sorted BAM file
 ```
@@ -288,13 +289,10 @@ Matrices of counts are saved in the `results/STAR_alignment` folder. The termina
 
 The whole output is in the `mapping_counting_SE.log` file.
 
-Differential Expression Analysis
-================================
+Differential Gene Expression Analysis
+=====================================
 
-This is done in R using several packages, loaded as shown below
-
-Load libraries
-==============
+This is done in R using several packages, loaded as shown below. `suppressPackageStartupMessages` is used to avoid the package loading messages, which are a lot!.
 
 ``` r
 suppressPackageStartupMessages(library(DESeq2))
@@ -310,7 +308,7 @@ suppressPackageStartupMessages(library(org.At.tair.db))
 Input data
 ==========
 
-Read and merge filtered matrices
+Read and merge count matrices generated by `featureCounts`
 
 ``` r
 # Get samples from folder names
@@ -324,15 +322,18 @@ cat("Reading sample", sample.names[1], "\n")
     ## Reading sample SRR5309277
 
 ``` r
-counts.matrix <- read.table(paste0(sample.dir, "/", sample.names[1], "/", "gene_assigned_P"), header = T)
+counts.matrix <- read.table(paste0(sample.dir, "/", sample.names[1], 
+                                   "/gene_assigned_P"), header = T)
 colnames(counts.matrix)[7] <- sample.names[1]
 # Read other samples
 ####################
 for (sample in sample.names[-1]){
   cat("Reading sample", sample, "\n")
-  temp.matrix <- read.table(paste0(sample.dir, "/", sample, "/", "gene_assigned_P"), header = T)
+  temp.matrix <- read.table(paste0(sample.dir, "/", sample, 
+                                   "/gene_assigned_P"), header = T)
   colnames(temp.matrix)[7] <-sample
-  counts.matrix <- merge(counts.matrix, temp.matrix, by = colnames(counts.matrix)[1:6], all = T)
+  counts.matrix <- merge(counts.matrix, temp.matrix, 
+                         by = colnames(counts.matrix)[1:6], all = T)
 }
 ```
 
@@ -349,7 +350,9 @@ rm(temp.matrix)
 Add sample data
 
 ``` r
-coldata <- data.frame("condition" = c("Ws_90", "Ws_90", "Ws_90", "mkp1_90", "mkp1_90", "mkp1_90"), row.names = sample.names)
+coldata <- data.frame("condition" = c("Ws_90", "Ws_90", "Ws_90", "mkp1_90", 
+                                      "mkp1_90", "mkp1_90"), 
+                      row.names = sample.names)
 Ws_90.samples <- which(coldata$condition == "Ws_90")
 mkp1_90.samples <- which(coldata$condition == "mkp1_90")
 cts <- counts.matrix[-c(1:6)]
@@ -543,17 +546,18 @@ cts.TMM.DEG <- cts.TMM[DEG.names,]
 Generate the plot using the `heatmap.2` function of the `gplots` package
 
 ``` r
-heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row", labRow = FALSE, trace = "none")
+heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row", 
+          labRow = FALSE, trace = "none")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png) 
+![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-The column dendogram shows a clear separation of the 2 experimental group.
+The column dendogram shows a clear separation between the 2 experimental groups.
 
 UP & DOWN Regulated Genes Ring Plot
 ===================================
 
-Graph of up and downregulated genes. Define UP and DOWN genes.
+Graph of up and down regulated genes. Define UP and DOWN genes.
 
 ``` r
 UP.DEG <- DEG.names[res.sig$log2FoldChange > 0]
@@ -563,7 +567,8 @@ DOWN.DEG <- DEG.names[res.sig$log2FoldChange < 0]
 Prepare data for the plot.
 
 ``` r
-plot.df <- data.frame("genes"=c(length(UP.DEG), length(DOWN.DEG)), "condition"=c("UP","DOWN"))
+plot.df <- data.frame("genes"=c(length(UP.DEG), length(DOWN.DEG)), 
+                      "condition"=c("UP","DOWN"))
 plot.df$fraction <- plot.df$genes / sum(plot.df$genes)
 plot.df <- plot.df[order(plot.df$fraction), ]
 plot.df$ymax <- cumsum(plot.df$fraction)
@@ -589,10 +594,10 @@ ggplot(plot.df, aes(fill=condition, ymax=ymax, ymin=ymin, xmax=4, xmin=2.5)) +
 
 ![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
-Gene Onthology Enrichment Analysis
-==================================
+Gene Ontology Enrichment Analysis
+=================================
 
-The packages `GOstats` and `org.At.tair.db` will be used to perform enrichment analysis of Gene ontology terms.
+The packages `GOstats` and `org.At.tair.db` will be used to perform enrichment analysis of Gene Ontology (GO) terms.
 
 First we must define the universe (whole set of genes) to use in the enrichment analysis.
 
@@ -623,7 +628,7 @@ DEG.GO.BP
     ##     Gene universe size: 20876 
     ##     Annotation package: org.At.tair
 
-We can perform a conditional test to avoid considering enriched more general GO terms whose nested terms are also enriched.
+We can perform a conditional test to avoid considering as enriched more general, or parental, GO terms whose nested terms are also enriched.
 
 ``` r
 conditional(params.GO) <- TRUE
@@ -664,8 +669,6 @@ Save results as html that could be included in a publication as a supplementary 
 htmlReport(DEG.GO.BP.Cond, file="DEG_GO_BP_Cond.html")
 ```
 
-![](README_files/report.png)
-
 [REVIGO](http://revigo.irb.hr/) can be used to create visual representations of the GO enrichment analysis. Supek F, Bošnjak M, Škunca N, Šmuc T. "REVIGO summarizes and visualizes long lists of Gene Ontology terms" PLoS ONE 2011. [doi:10.1371/journal.pone.0021800](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0021800). We must prepare the input for REVIGO with the GO term and its p-value.
 
 ``` r
@@ -697,7 +700,7 @@ and a TreeMap plot ![](README_files/REVIGO.treemap.png)
 Automate the analysis
 =====================
 
-The whole analysis can be performed by running sequentially the scripts provided in the `script` folder. In addition of running the whole analysis for all the samples automatically (`mergeBAM_ESR1.sh` and `run_macs_ESR1.sh` must be adapted manually according to the experimental design) the bash scripts will also measure and display the execution time of all the steps.
+The whole analysis can be performed by running sequentially the scripts provided in the `script` folder. In addition of running the whole analysis for all the samples automatically (`DEG_GO.r` must be adapted manually according to the experimental design) the bash scripts will also measure and display the execution time of all the steps.
 
 1.  Create a folder for the whole analysis, e.g. `RNAseq`, and another inside called `fastq` to store the FASTQ files.
 2.  Copy the `SRR_Acc_List.txt` file and the `fastq-dump_SRRlist.sh` bash script to the `RNAseq/fastq` folder and the remaining scripts to the `RNAseq` folder.
