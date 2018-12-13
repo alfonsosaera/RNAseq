@@ -115,8 +115,10 @@ DEG.names <- as.character(rownames(res.sig))
 cts.TMM.DEG <- cts.TMM[DEG.names,]
 
 # Generate the plot
+png("DEG.heatmap.png")
 heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row", 
           labRow = FALSE, trace = "none")
+dev.off()
 
 ################################################################################
 # Ring Plot 
@@ -150,7 +152,7 @@ ggplot(plot.df, aes(fill=condition, ymax=ymax, ymin=ymin, xmax=4, xmin=2.5)) +
 ggsave("DEG.ring.plot.png")
 
 ################################################################################
-# Gene Onthology Enrichment Analysis 
+# Gene Ontology Enrichment Analysis 
 ################################################################################
 # Define universe of genes
 geneUniverse <- as.character(counts.matrix$Geneid)
