@@ -42,10 +42,3 @@ while ($file = readdir DIR) {
   }
 }
 closedir DIR;
-
-@sample_names = keys %sample_names;
-
-# Process sample by sample
-foreach $sample_name (@sample_names) {
-
-}

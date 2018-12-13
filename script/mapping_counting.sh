@@ -74,7 +74,7 @@ do
   cd ${outDIR}/${sample}
   ${STAR_path}/STAR --runThreadN $cores \
     --genomeDir $indexPATH \
-    --readFilesIn ${dataPATH}/${sample}_1.fastq ${dataPATH}/${sample}_2.fastq \
+    --readFilesIn ${dataPATH}/${sample}_1.trim.fastq ${dataPATH}/${sample}_2.trim.fastq \
     --outSAMtype BAM SortedByCoordinate;
     # outputs Aligned.sortedByCoord.out.bam
   end_4=`date +%s`
