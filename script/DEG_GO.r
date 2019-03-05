@@ -108,6 +108,109 @@ res.sig <- res[ res$padj < 0.05 & !is.na(res$padj), ]
 summary(res.sig)
 
 ################################################################################
+# Volcano plot
+################################################################################
+#
+# Prepare data
+#
+volcano.plot.df <- data.frame(gene=rownames(res)[!is.na(res$pvalue)],
+                              log2FC=res$log2FoldChange[!is.na(res$pvalue)],
+                              logpval=-log10(res$pvalue[!is.na(res$pvalue)]),
+                              fdr=res$padj[!is.na(res$pvalue)],
+                              stringsAsFactors = FALSE)
+
+# replace infinite -log10(pvalue) with the maximum value that is not infinite + 15%
+max.pvalue <- max(volcano.plot.df$logpval[is.finite(volcano.plot.df$logpval)]) * 1.15
+infinite.pvalue <- which(is.infinite(volcano.plot.df$logpval))
+volcano.plot.df$logpval[infinite.pvalue] <- max.pvalue
+
+# replace NA values in fdr with 1
+volcano.plot.df$fdr[which(is.na(volcano.plot.df$fdr))] <- 1
+
+# reorder dataframe
+volcano.plot.df <- volcano.plot.df[order(-volcano.plot.df$fdr),]
+
+#
+# Generate volcano plot
+#
+# Use color to show UP and Down regulation
+##########################################
+# Define color
+volcano.plot.df$color <- ifelse(volcano.plot.df$log2FC < 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "Down-regulated",
+                                ifelse(volcano.plot.df$log2FC > 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "UP-regulated",
+                                       "Non-DEG"))
+volcano.plot.df$color <- factor(volcano.plot.df$color, levels = c("UP-regulated", "Down-regulated", "Non-DEG"))
+# Define fill
+volcano.plot.df$fill <- ifelse(volcano.plot.df$log2FC < 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "green",
+                               ifelse(volcano.plot.df$log2FC > 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "red",
+                                      "grey70"))
+
+# Label genes with high significance
+####################################
+# Select labels with -log10(p-value) > 200
+volcano.plot.df$label <- ifelse(volcano.plot.df$logpval > 200, volcano.plot.df$gene, "")
+
+# Use shape to show some Gene Ontologies
+########################################
+# Simulate Gene Ontology 1
+Gene.Ontology.1 <- sample(volcano.plot.df$gene[which(volcano.plot.df$color == "Down-regulated" &
+                                                       volcano.plot.df$logpval > 100 &
+                                                       volcano.plot.df$logpval <= 200)],
+                          10, replace = FALSE)
+# Simulate Gene Ontology 2
+Gene.Ontology.2 <- sample(volcano.plot.df$gene[which(volcano.plot.df$color == "UP-regulated" &
+                                                       volcano.plot.df$logpval > 50 &
+                                                       volcano.plot.df$logpval <= 300)],
+                          10, replace = FALSE)
+# Assign shape to gene ontolgies
+volcano.plot.df$shape <- ifelse(volcano.plot.df$gene %in% Gene.Ontology.1, "GO:00001",
+                                ifelse(volcano.plot.df$gene %in% Gene.Ontology.2, "GO:00002",
+                                       "NO_GO"))
+volcano.plot.df$shape <- factor(volcano.plot.df$shape,
+                                levels = c("GO:00001", "GO:00002", "NO_GO"))
+
+# Volcano plot
+##############
+axis.size <- 1
+font.size <- 10
+
+ggplot(volcano.plot.df, aes(x=log2FC, y = logpval, label = label)) +
+  geom_vline(xintercept = 0, color = "black",
+             linetype = "solid", size = 1) +
+  geom_point(aes(color = color, shape = shape),  #aes(shape = shape, color = color),
+             fill = alpha(volcano.plot.df$fill, 0.2),
+             size = 2, stroke = 1) +
+  geom_text_repel(segment.color = volcano.plot.df$fill, min.segment.length = unit(0, 'lines'),
+                  color = volcano.plot.df$fill, size = 4) +
+  annotate("text", x = -0.65, y = 280,
+           label = 'bold("Ws 90")',
+           color = "black", parse = T) +
+  annotate("text", x = 0.85, y = 280,
+           label = 'bold("mkp1 90")',
+           color = "black", parse = T) +
+  scale_shape_manual(breaks = c("GO:00001", "GO:00002"),
+                     values = c("GO:00001" = 22,
+                                "GO:00002" = 24,
+                                "NO_GO" = 21)) +
+  scale_color_manual(breaks = c("UP-regulated", "Down-regulated"),
+                     values = c("UP-regulated" = "red",
+                                "Down-regulated" = "green",
+                                "Non-DEG" = "grey70")) +
+  labs(color = "", shape = "",
+       x = expression(log[2]("Fold Change")),
+       y = expression(-log[10](italic(p)-value))) +
+  theme_classic() +
+  theme(axis.line = element_line(size = axis.size, color = "black"),
+        axis.ticks = element_line(size = axis.size, color = "black"),
+        axis.ticks.length = unit(axis.size * 5, "points"),
+        plot.title = element_text(hjust = (0.5), size = font.size + 8),
+        axis.title.y = element_text(size = font.size + 5),
+        axis.title.x = element_text(size = font.size + 5),
+        axis.text = element_text(size = font.size + 2))
+
+ggsave("volcano.plot.png")
+
+################################################################################
 # Heatmap
 ################################################################################
 # Counts of the identified DEG
@@ -120,6 +223,20 @@ heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row",
           labRow = FALSE, trace = "none")
 dev.off()
 
+################################################################################
+# PCA
+################################################################################
+# calculate PCAs
+pca <- prcomp(t(cts.TMM.DEG))
+
+# Generate biplot
+ggbiplot(pca, obs.scale = 1, var.scale = 1, var.axes = F,
+         labels = colnames(cts.TMM.DEG),
+         groups = c(rep("Ws_90",3), rep("mkp1_90",3)), ellipse = TRUE, circle = TRUE) +
+  scale_color_discrete(name = '') +
+  theme_bw()
+
+ggsave("DEG.PCA.pmg")
 ################################################################################
 # Ring Plot 
 ################################################################################
