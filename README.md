@@ -98,10 +98,10 @@ To download the FASTQ files, we need the RUN number of each sample and `fastq-du
 We can manually download each one as below
 
 ``` shell
-fasterq-dump SRR5309277
-fasterq-dump SRR5309278
+fasterq-dump SRR5309277 
+fasterq-dump SRR5309278 
 ...
-fasterq-dump SRR5309287
+fasterq-dump SRR5309287 
 fasterq-dump SRR5309288
 ```
 
@@ -124,7 +124,7 @@ for i in $files
 that will read the RUN codes from the `SRR_Acc_List.txt` file that can be also downloaded from the [NCBI SRA Run Selector](https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP101277) by clicking `AccessionList`.
 
 ``` shell
-SRR5309277
+SRR5309277 
 SRR5309278
 ...
 SRR5309288
@@ -206,7 +206,7 @@ Mapping of the reads (trimmed FASTQ file) with `STAR`
 STAR --runThreadN 4 \  # number of cores
      --genomeDir $indexPATH \ # path to the index
      --readFilesIn SRR5309277.trim.fastq \ # path to reads - FASTQ file
-     --outSAMtype BAM SortedByCoordinate
+     --outSAMtype BAM SortedByCoordinate 
 ```
 
 The output, a sorted by coordinateBAM file similar to `samtools sort` command, is named Aligned.sortedByCoord.out.bam. Reads are assigned to genes with [`featureCounts`](http://bioinf.wehi.edu.au/featureCounts/) from the [Subread package](http://subread.sourceforge.net/)
@@ -324,25 +324,25 @@ cat("Reading sample", sample.names[1], "\n")
     ## Reading sample SRR5309277
 
 ``` r
-counts.matrix <- read.table(paste0(sample.dir, "/", sample.names[1],
+counts.matrix <- read.table(paste0(sample.dir, "/", sample.names[1], 
                                    "/gene_assigned_P"), header = T)
 colnames(counts.matrix)[7] <- sample.names[1]
 # Read other samples
 ####################
 for (sample in sample.names[-1]){
   cat("Reading sample", sample, "\n")
-  temp.matrix <- read.table(paste0(sample.dir, "/", sample,
+  temp.matrix <- read.table(paste0(sample.dir, "/", sample, 
                                    "/gene_assigned_P"), header = T)
   colnames(temp.matrix)[7] <-sample
-  counts.matrix <- merge(counts.matrix, temp.matrix,
+  counts.matrix <- merge(counts.matrix, temp.matrix, 
                          by = colnames(counts.matrix)[1:6], all = T)
 }
 ```
 
-    ## Reading sample SRR5309278
-    ## Reading sample SRR5309279
-    ## Reading sample SRR5309286
-    ## Reading sample SRR5309287
+    ## Reading sample SRR5309278 
+    ## Reading sample SRR5309279 
+    ## Reading sample SRR5309286 
+    ## Reading sample SRR5309287 
     ## Reading sample SRR5309288
 
 ``` r
@@ -352,8 +352,8 @@ rm(temp.matrix)
 Add sample data
 
 ``` r
-coldata <- data.frame("condition" = c("Ws_90", "Ws_90", "Ws_90", "mkp1_90",
-                                      "mkp1_90", "mkp1_90"),
+coldata <- data.frame("condition" = c("Ws_90", "Ws_90", "Ws_90", "mkp1_90", 
+                                      "mkp1_90", "mkp1_90"), 
                       row.names = sample.names)
 Ws_90.samples <- which(coldata$condition == "Ws_90")
 mkp1_90.samples <- which(coldata$condition == "mkp1_90")
@@ -470,8 +470,8 @@ res <- results(dds)
 res
 ```
 
-    ## log2 fold change (MLE): condition mkp1 90 vs Ws 90
-    ## Wald test p-value: condition mkp1 90 vs Ws 90
+    ## log2 fold change (MLE): condition mkp1 90 vs Ws 90 
+    ## Wald test p-value: condition mkp1 90 vs Ws 90 
     ## DataFrame with 33602 rows and 6 columns
     ##                    baseMean      log2FoldChange              lfcSE
     ##                   <numeric>           <numeric>          <numeric>
@@ -506,7 +506,7 @@ Summary of the analysis
 summary(res)
 ```
 
-    ##
+    ## 
     ## out of 27501 with nonzero total read count
     ## adjusted p-value < 0.1
     ## LFC > 0 (up)       : 4066, 15%
@@ -524,7 +524,7 @@ res.sig <- res[ res$padj < 0.05 & !is.na(res$padj), ]
 summary(res.sig)
 ```
 
-    ##
+    ## 
     ## out of 7169 with nonzero total read count
     ## adjusted p-value < 0.1
     ## LFC > 0 (up)       : 3455, 48%
@@ -549,7 +549,7 @@ volcano.plot.df <- data.frame(gene=rownames(res)[!is.na(res$pvalue)],
                               fdr=res$padj[!is.na(res$pvalue)],
                               stringsAsFactors = FALSE)
 
-# replace infinite -log10(pvalue) with the maximum value that is not infinite + 15%
+# replace infinite -log10(pvalue) with the maximum value that is not infinite + 15% 
 max.pvalue <- max(volcano.plot.df$logpval[is.finite(volcano.plot.df$logpval)]) * 1.15
 infinite.pvalue <- which(is.infinite(volcano.plot.df$logpval))
 volcano.plot.df$logpval[infinite.pvalue] <- max.pvalue
@@ -566,38 +566,47 @@ Draw volcano plot using `ggplot2` and `ggrepel`.
 ``` r
 # Use color to show UP and Down regulation
 ##########################################
-# Define color
-volcano.plot.df$color <- ifelse(volcano.plot.df$log2FC < 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "Down-regulated",
-                                ifelse(volcano.plot.df$log2FC > 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "UP-regulated",
+# Define color 
+volcano.plot.df$color <- ifelse(volcano.plot.df$fdr < 0.0001 & 
+                                  volcano.plot.df$log2FC < -1, "Down-regulated",
+                                ifelse(volcano.plot.df$fdr < 0.0001 & 
+                                         volcano.plot.df$log2FC > 1, 
+                                       "UP-regulated",
                                        "Non-DEG"))
-volcano.plot.df$color <- factor(volcano.plot.df$color, levels = c("UP-regulated", "Down-regulated", "Non-DEG"))
+volcano.plot.df$color <- factor(volcano.plot.df$color, 
+                                levels = c("UP-regulated", 
+                                           "Down-regulated", 
+                                           "Non-DEG"))
 # Define fill
-volcano.plot.df$fill <- ifelse(volcano.plot.df$log2FC < 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "green",
-                                ifelse(volcano.plot.df$log2FC > 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "red",
+volcano.plot.df$fill <- ifelse(volcano.plot.df$fdr < 0.0001 & 
+                                 volcano.plot.df$log2FC < -1, "green",
+                                ifelse(volcano.plot.df$fdr < 0.0001 & 
+                                         volcano.plot.df$log2FC > 1, "red",
                                        "grey70"))
 
 # Label genes with high significance
 ####################################
 # Select labels with -log10(p-value) > 200
-volcano.plot.df$label <- ifelse(volcano.plot.df$logpval > 200, volcano.plot.df$gene, "")
+volcano.plot.df$label <- ifelse(volcano.plot.df$logpval > 200, 
+                                volcano.plot.df$gene, "")
 
 # Use shape to show some Gene Ontologies
 ########################################
 # Simulate Gene Ontology 1
-Gene.Ontology.1 <- sample(volcano.plot.df$gene[which(volcano.plot.df$color == "Down-regulated" &
-                                                       volcano.plot.df$logpval > 100 &
-                                                       volcano.plot.df$logpval <= 200)],
+Gene.Ontology.1 <- sample(volcano.plot.df$gene[which(volcano.plot.df$color == "Down-regulated" & 
+                                                       volcano.plot.df$logpval > 100 & 
+                                                       volcano.plot.df$logpval <= 200)], 
                           10, replace = FALSE)
 # Simulate Gene Ontology 2
-Gene.Ontology.2 <- sample(volcano.plot.df$gene[which(volcano.plot.df$color == "UP-regulated" &
-                                                       volcano.plot.df$logpval > 50 &
-                                                       volcano.plot.df$logpval <= 300)],
+Gene.Ontology.2 <- sample(volcano.plot.df$gene[which(volcano.plot.df$color == "UP-regulated" & 
+                                                       volcano.plot.df$logpval > 50 & 
+                                                       volcano.plot.df$logpval <= 300)], 
                           10, replace = FALSE)
 # Assign shape to gene ontolgies
-volcano.plot.df$shape <- ifelse(volcano.plot.df$gene %in% Gene.Ontology.1, "GO:00001",
-                          ifelse(volcano.plot.df$gene %in% Gene.Ontology.2, "GO:00002",
+volcano.plot.df$shape <- ifelse(volcano.plot.df$gene %in% Gene.Ontology.1, "GO:00001", 
+                          ifelse(volcano.plot.df$gene %in% Gene.Ontology.2, "GO:00002", 
                                  "NO_GO"))
-volcano.plot.df$shape <- factor(volcano.plot.df$shape,
+volcano.plot.df$shape <- factor(volcano.plot.df$shape, 
                                 levels = c("GO:00001", "GO:00002", "NO_GO"))
 
 # Volcano plot
@@ -606,29 +615,29 @@ axis.size <- 1
 font.size <- 10
 
 ggplot(volcano.plot.df, aes(x=log2FC, y = logpval, label = label)) +
-        geom_vline(xintercept = 0, color = "black",
+        geom_vline(xintercept = 0, color = "black", 
                    linetype = "solid", size = 1) +
-        geom_point(aes(color = color, shape = shape),  #aes(shape = shape, color = color),
-                   fill = alpha(volcano.plot.df$fill, 0.2),
+        geom_point(aes(color = color, shape = shape),   
+                   fill = alpha(volcano.plot.df$fill, 0.2), 
                    size = 2, stroke = 1) +
-        geom_text_repel(segment.color = volcano.plot.df$fill, min.segment.length = unit(0, 'lines'),
+        geom_text_repel(min.segment.length = unit(0, 'lines'),
                         color = volcano.plot.df$fill, size = 4) +
-        annotate("text", x = -0.65, y = 280,
-                 label = 'bold("Ws 90")',
+        annotate("text", x = -0.65, y = 280, 
+                 label = 'bold("Ws 90")', 
                  color = "black", parse = T) +
-        annotate("text", x = 0.85, y = 280,
-                       label = 'bold("mkp1 90")',
+        annotate("text", x = 0.85, y = 280, 
+                       label = 'bold("mkp1 90")', 
                        color = "black", parse = T) +
         scale_shape_manual(breaks = c("GO:00001", "GO:00002"),
-                           values = c("GO:00001" = 22,
+                           values = c("GO:00001" = 22, 
                                       "GO:00002" = 24,
                                       "NO_GO" = 21)) +
         scale_color_manual(breaks = c("UP-regulated", "Down-regulated"),
                            values = c("UP-regulated" = "red",
                                       "Down-regulated" = "green",
                                       "Non-DEG" = "grey70")) +
-        labs(color = "", shape = "",
-             x = expression(log[2]("Fold Change")),
+        labs(color = "", shape = "", 
+             x = expression(log[2]("Fold Change")), 
              y = expression(-log[10](italic(p)-value))) +
         theme_classic() +
         theme(axis.line = element_line(size = axis.size, color = "black"),
@@ -655,7 +664,7 @@ cts.TMM.DEG <- cts.TMM[DEG.names,]
 Generate the plot using the `heatmap.2` function of the `gplots` package
 
 ``` r
-heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row",
+heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row", 
           labRow = FALSE, trace = "none")
 ```
 
@@ -670,8 +679,8 @@ DEG genes can be further analyzed by Principal Components Analysis (PCA) using `
 
 ``` r
 pca <- prcomp(t(cts.TMM.DEG))
-ggbiplot(pca, obs.scale = 1, var.scale = 1, var.axes = F,
-         labels = colnames(cts.TMM.DEG),
+ggbiplot(pca, obs.scale = 1, var.scale = 1, var.axes = F, 
+         labels = colnames(cts.TMM.DEG), 
          groups = c(rep("Ws_90",3), rep("mkp1_90",3)), ellipse = TRUE, circle = TRUE) +
   scale_color_discrete(name = '') +
   theme_bw()
@@ -692,7 +701,7 @@ DOWN.DEG <- DEG.names[res.sig$log2FoldChange < 0]
 Prepare data for the plot.
 
 ``` r
-plot.df <- data.frame("genes"=c(length(UP.DEG), length(DOWN.DEG)),
+plot.df <- data.frame("genes"=c(length(UP.DEG), length(DOWN.DEG)), 
                       "condition"=c("UP","DOWN"))
 plot.df$fraction <- plot.df$genes / sum(plot.df$genes)
 plot.df <- plot.df[order(plot.df$fraction), ]
@@ -747,10 +756,10 @@ DEG.GO.BP <- hyperGTest(params.GO)
 DEG.GO.BP
 ```
 
-    ## Gene to GO BP  test for over-representation
+    ## Gene to GO BP  test for over-representation 
     ## 3325 GO BP ids tested (1027 have p < 0.05)
-    ## Selected gene set size: 5716
-    ##     Gene universe size: 20876
+    ## Selected gene set size: 5716 
+    ##     Gene universe size: 20876 
     ##     Annotation package: org.At.tair
 
 We can perform a conditional test to avoid considering as enriched more general, or parental, GO terms whose nested terms are also enriched.
@@ -761,10 +770,10 @@ DEG.GO.BP.Cond <- hyperGTest(params.GO)
 DEG.GO.BP.Cond
 ```
 
-    ## Gene to GO BP Conditional test for over-representation
+    ## Gene to GO BP Conditional test for over-representation 
     ## 3325 GO BP ids tested (634 have p < 0.05)
-    ## Selected gene set size: 5716
-    ##     Gene universe size: 20876
+    ## Selected gene set size: 5716 
+    ##     Gene universe size: 20876 
     ##     Annotation package: org.At.tair
 
 Check top ten most significant GO terms
@@ -799,14 +808,14 @@ htmlReport(DEG.GO.BP.Cond, file="DEG_GO_BP_Cond.html")
 [REVIGO](http://revigo.irb.hr/) can be used to create visual representations of the GO enrichment analysis. Supek F, Bošnjak M, Škunca N, Šmuc T. "REVIGO summarizes and visualizes long lists of Gene Ontology terms" PLoS ONE 2011. [doi:10.1371/journal.pone.0021800](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0021800). We must prepare the input for REVIGO with the GO term and its p-value.
 
 ``` r
-write.table(summary(DEG.GO.BP.Cond)[,c(1,2)], "REVIGO.input.txt",
+write.table(summary(DEG.GO.BP.Cond)[,c(1,2)], "REVIGO.input.txt", 
             row.names = FALSE, col.names = FALSE, quote = FALSE)
 ```
 
 Check the format
 
 ``` shell
-head REVIGO.input.txt
+head REVIGO.input.txt 
 ```
 
     GO:1901698 1.74851317264471e-111
