@@ -136,13 +136,13 @@ volcano.plot.df <- volcano.plot.df[order(-volcano.plot.df$fdr),]
 # Use color to show UP and Down regulation
 ##########################################
 # Define color
-volcano.plot.df$color <- ifelse(volcano.plot.df$log2FC < 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "Down-regulated",
-                                ifelse(volcano.plot.df$log2FC > 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "UP-regulated",
+volcano.plot.df$color <- ifelse(volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "Down-regulated",
+                                ifelse(volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "UP-regulated",
                                        "Non-DEG"))
 volcano.plot.df$color <- factor(volcano.plot.df$color, levels = c("UP-regulated", "Down-regulated", "Non-DEG"))
 # Define fill
-volcano.plot.df$fill <- ifelse(volcano.plot.df$log2FC < 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "green",
-                               ifelse(volcano.plot.df$log2FC > 0 & volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "red",
+volcano.plot.df$fill <- ifelse(volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC < -1, "green",
+                               ifelse(volcano.plot.df$fdr < 0.0001 & volcano.plot.df$log2FC > 1, "red",
                                       "grey70"))
 
 # Label genes with high significance
@@ -180,7 +180,7 @@ ggplot(volcano.plot.df, aes(x=log2FC, y = logpval, label = label)) +
   geom_point(aes(color = color, shape = shape),  #aes(shape = shape, color = color),
              fill = alpha(volcano.plot.df$fill, 0.2),
              size = 2, stroke = 1) +
-  geom_text_repel(segment.color = volcano.plot.df$fill, min.segment.length = unit(0, 'lines'),
+  geom_text_repel(min.segment.length = unit(0, 'lines'),
                   color = volcano.plot.df$fill, size = 4) +
   annotate("text", x = -0.65, y = 280,
            label = 'bold("Ws 90")',
