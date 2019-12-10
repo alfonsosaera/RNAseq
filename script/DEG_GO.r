@@ -250,7 +250,7 @@ ggbiplot(pca, obs.scale = 1, var.scale = 1, var.axes = F,
   scale_color_discrete(name = '') +
   theme_bw()
 
-ggsave("DEG.PCA.pmg")
+ggsave("DEG.PCA.png")
 ################################################################################
 # Ring Plot 
 ################################################################################
