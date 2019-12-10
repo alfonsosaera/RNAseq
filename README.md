@@ -215,7 +215,7 @@ The output, a sorted by coordinateBAM file similar to `samtools sort` command, i
 featureCounts -T 4 \
               -a $GTFpath/genes.gtf \
               -o gene_assigned_P \
-              Aligned.sortedByCoord.out.bam 
+              Aligned.sortedByCoord.out.bam
 ```
 
 The `mapping_counting_SE.sh` script performs all these steps automatically for all trimmed FASTQ files.
@@ -299,7 +299,7 @@ suppressPackageStartupMessages(library(DESeq2))
 suppressPackageStartupMessages(library(tweeDEseq))
 suppressPackageStartupMessages(library(edgeR))
 suppressPackageStartupMessages(library(DESeq))
-suppressPackageStartupMessages(library(gplots))
+suppressPackageStartupMessages(library(pheatmap))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggrepel))
 suppressPackageStartupMessages(library(ggbiplot))
@@ -654,23 +654,47 @@ ggplot(volcano.plot.df, aes(x=log2FC, y = logpval, label = label)) +
 Heatmap
 =======
 
-Results will be further explored with a heatmap. Prepare data for the heatmap getting the counts of the identified DEG.
 
-``` r
+Results will be further explored with a heatmap. Prepare data for the heatmap getting the counts of the identified DEG. Each gene data is usually scaled to maximize gene expression differences.
+
+```{r}
 DEG.names <- as.character(rownames(res.sig))
 cts.TMM.DEG <- cts.TMM[DEG.names,]
+cts.TMM.scaled.DEG <- data.frame(t(scale(t(cts.TMM.DEG))))
 ```
 
-Generate the plot using the `heatmap.2` function of the `gplots` package
-
-``` r
-heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row",
-          labRow = FALSE, trace = "none")
+Generate the plot using the `pheatmap` function of the `pheatmap` package.
+```{r}
+pheatmap(cts.TMM.scaled.DEG,
+         show_rownames = F,
+         color = colorRampPalette(c("green", "black", "red"))(100))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](README_files/Heatmap.png)
 
-The column dendogram shows a clear separation between the 2 experimental groups.
+
+The column dendogram shows a clear separation between the 2 experimental groups and row dendrogram shows a very clear separation between up and down regulated genes.
+
+We can highlight this difference between up and down regulated genes by using row annotations (columns annotations are also available if needed) using the argument `annotation_row`. The row dendrogram is removed with `cluster_rows` for better readibility.
+
+```{r}
+# get UP & DOWN info
+annot.df <- data.frame(group = ifelse(res.sig$log2FoldChange > 0, "UP", "DOWN"))
+annot.df$group <- factor(annot.df$group, levels = c("UP", "DOWN"))
+row.names(annot.df) <- row.names(res.sig)
+
+# heatmap
+pheatmap(cts.TMM.scaled.DEG,
+         annotation_row = annot.df,
+         treeheight_row = 0,
+         show_rownames = F,
+         color = colorRampPalette(c("green", "black", "red"))(100))
+```
+
+![](README_files/Heatmap.groups.png)
+
+
+Heatmaps can be saved to disk adding the argument `filename = "my.Heatmap.png"`, file type is directly detected from the extension in the name (.png).
 
 Principal Components Analysis
 =============================
