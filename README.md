@@ -675,15 +675,18 @@ pheatmap(cts.TMM.scaled.DEG,
 
 The column dendogram shows a clear separation between the 2 experimental groups and row dendrogram shows a very clear separation between up and down regulated genes.
 
-We can highlight this difference between up and down regulated genes by using row annotations (columns annotations are also available if needed) using the argument `annotation_row`. The row dendrogram is removed with `cluster_rows` for better readibility.
+We can highlight this difference between up and down regulated genes by using row annotations (columns annotations are also available if needed) using the argument `annotation_row`. Prepare _UP & DOWN_ data:
 
 ```{r}
 # get UP & DOWN info
 annot.df <- data.frame(group = ifelse(res.sig$log2FoldChange > 0, "UP", "DOWN"))
 annot.df$group <- factor(annot.df$group, levels = c("UP", "DOWN"))
 row.names(annot.df) <- row.names(res.sig)
+```
 
-# heatmap
+Make the new heatmap. The row dendrogram is hidden with `treeheight_row = 0` for better readibility.
+
+```{r}
 pheatmap(cts.TMM.scaled.DEG,
          annotation_row = annot.df,
          treeheight_row = 0,
