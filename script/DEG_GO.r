@@ -213,15 +213,29 @@ ggsave("volcano.plot.png")
 ################################################################################
 # Heatmap
 ################################################################################
-# Counts of the identified DEG
+# Scale counts of the identified DEG
 DEG.names <- as.character(rownames(res.sig))
 cts.TMM.DEG <- cts.TMM[DEG.names,]
+cts.TMM.scaled.DEG <- data.frame(t(scale(t(cts.TMM.DEG))))
 
-# Generate the plot
-png("DEG.heatmap.png")
-heatmap.2(as.matrix(cts.TMM.DEG), dendrogram = "column", scale = "row", 
-          labRow = FALSE, trace = "none")
-dev.off()
+# Generate heatmap
+pheatmap(cts.TMM.scaled.DEG, 
+         show_rownames = F,
+         color = colorRampPalette(c("green", "black", "red"))(100),
+         filename = "README_files/Heatmap.png")
+
+# Groups for annotated heatmap
+annot.df <- data.frame(group = ifelse(res.sig$log2FoldChange > 0, "UP", "DOWN"))
+annot.df$group <- factor(annot.df$group, levels = c("UP", "DOWN"))
+row.names(annot.df) <- row.names(res.sig)
+
+# generate heatmap
+pheatmap(cts.TMM.scaled.DEG, 
+         annotation_row = annot.df,
+         treeheight_row = 0,
+         show_rownames = F,
+         color = colorRampPalette(c("green", "black", "red"))(100),
+         filename = "README_files/Heatmap.groups.png")
 
 ################################################################################
 # PCA
