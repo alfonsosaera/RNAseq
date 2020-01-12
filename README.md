@@ -535,6 +535,12 @@ summary(res.sig)
     ## [1] see 'cooksCutoff' argument of ?results
     ## [2] see 'independentFiltering' argument of ?results
 
+Save results to csv (`DEG.csv`) for further analysis with the following code
+
+``` r
+write.csv(res.sig, "DEG.csv")
+```
+
 Volcano plot
 ============
 
