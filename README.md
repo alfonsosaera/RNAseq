@@ -200,7 +200,7 @@ STAR --runThreadN 4 \
 Mapping and counting
 ====================
 
-Mapping of the reads (trimmed FASTQ file) with `STAR`
+Mapping of the reads (trimmed FASTQ file) with `STAR`. If your fastq files are gzipped you just need to add `--readFilesCommand zcat` as suggested [here](https://www.biostars.org/p/243683/#243687)
 
 ``` shell
 STAR --runThreadN 4 \  
